@@ -6,7 +6,7 @@ setup(
     author="Prajit Rajkumar",
     author_email="prajkumar@ucsd.edu",
     description="Tool to classify novel drugs and other health-related" 
-                + "chemicals by source",
+                + "chemicals by origin",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,9 +1,11 @@
+from openai import OpenAI 
+
 class Drug(object):
   def __init__(self, name, description = None, info_source=None, classification=None):
     self.name = name
-    self.description = description or ""
-    self.info_source = info_source or ""
-    self.classification = classification or []
+    self.description = description #or ""
+    self.info_source = info_source #or ""
+    self.classification = classification #or []
   
   def __str__(self):
     return self.name
@@ -17,7 +19,8 @@ class Drug(object):
   def classification(self):
     return self.classification
   
-  def retrieve(self):
+  from ._retriever import retrieve
     
   def classify(self, name, description)
 
+class OpenAI

@@ -26,7 +26,17 @@ XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'api_key': 'bdd2f83e20dc27d1e257d3896d036fd0a108'
                         }
 
-def retrieve(self, name)
+def retrieve(self, name):
+    try:
+        self.description = wikipedia_retrieve(name)
+        self.info_source = "WIKIPEDIA"
+    except:
+        try:
+            self.description = pubmed_retrieve(name)
+            self.info_source = "PUBMED"
+        except:
+            self.description = None
+            self.info_source = None
     
 def pubmed_retrieve(drug):
     SEARCH_PARAMS['term'] = drug + '[ti]'
