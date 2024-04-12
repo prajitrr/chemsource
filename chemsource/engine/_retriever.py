@@ -2,6 +2,7 @@
 #IMPORTANT IN FINAL VERSION, FIGURE OUT HOW TO EITHER QUERY WITHOUT
 #PUBMED KEY OR HOW TO GET A PUBMED KEY FROM USER
 
+from ..config import Config
 from exceptions import XMLParseError, XMLRetrievalError
 from exceptions import XMLParseError2, XMLRetrievalError2, JoinError
 
@@ -15,7 +16,7 @@ SEARCH_PARAMS = {'db': 'pubmed',
                  'retmax': '3',
                  'usehistory': 'n',
                  'sort': 'relevance',
-                 'api_key': 'bdd2f83e20dc27d1e257d3896d036fd0a108'
+                 'api_key': Config().ncbi_key
                  }
 
 XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
@@ -23,7 +24,7 @@ XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'WebEnv': '',
                         'rettype': 'abstract',
                         'retmax': '3',
-                        'api_key': 'bdd2f83e20dc27d1e257d3896d036fd0a108'
+                        'api_key': Config().ncbi_key
                         }
 
 def retrieve(self, name):
@@ -39,9 +40,13 @@ def retrieve(self, name):
             self.info_source = None
     
 def pubmed_retrieve(drug):
-    SEARCH_PARAMS['term'] = drug + '[ti]'
+    temp_search_params = SEARCH_PARAMS
+    if (temp_search_params["api_key"] is None):
+        del temp_search_params["api_key"]
+    temp_search_params['term'] = drug + '[ti]'
+
     try:
-        xml_content = etree.fromstring(r.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", params=SEARCH_PARAMS).content)
+        xml_content = etree.fromstring(r.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", params=temp_search_params).content)
     except:
         raise XMLParseError
     try:
@@ -50,9 +55,12 @@ def pubmed_retrieve(drug):
     except:
         raise XMLRetrievalError
     else:
-        XML_RETRIEVAL_PARAMS['WebEnv'] = xml_content.find(".//WebEnv").text
+        temp_retrieval_params = XML_RETRIEVAL_PARAMS
+        if (temp_retrieval_params["api_key"] is None):
+            del temp_retrieval_params["api_key"]
+        temp_retrieval_params['WebEnv'] = xml_content.find(".//WebEnv").text
         try:
-            retrieval_content = etree.fromstring(r.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?', params=XML_RETRIEVAL_PARAMS).content)
+            retrieval_content = etree.fromstring(r.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?', params=temp_retrieval_params).content)
         except:
             raise XMLParseError2
         try:

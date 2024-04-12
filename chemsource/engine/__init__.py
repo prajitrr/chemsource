@@ -22,5 +22,3 @@ class Drug(object):
   from ._retriever import retrieve
     
   def classify(self, name, description)
-
-class OpenAI
