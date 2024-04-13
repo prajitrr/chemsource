@@ -21,4 +21,8 @@ class Drug(object):
   
   from ._retriever import retrieve
     
-  def classify(self, name, description)
+  def classify(self):
+    return self.classification
+    
+  def chemsource(self, name):
+    

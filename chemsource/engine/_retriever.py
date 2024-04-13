@@ -27,17 +27,18 @@ XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'api_key': Config().ncbi_key
                         }
 
-def retrieve(self, name):
+def retrieve(self):
     try:
-        self.description = wikipedia_retrieve(name)
+        self.description = wikipedia_retrieve(self.name)
         self.info_source = "WIKIPEDIA"
     except:
         try:
-            self.description = pubmed_retrieve(name)
+            self.description = pubmed_retrieve(self.name)
             self.info_source = "PUBMED"
         except:
             self.description = None
             self.info_source = None
+    return self.info_source, self.description
     
 def pubmed_retrieve(drug):
     temp_search_params = SEARCH_PARAMS
