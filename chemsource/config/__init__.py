@@ -1,5 +1,3 @@
-from openai import OpenAI 
-
 BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of" 
                + " the following: MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE,"
                + " INDUSTRIAL. Note that ENDOGENOUS refers to compounds that" 
@@ -19,62 +17,6 @@ BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of"
                + " MEDICAL, FOOD or list INFO), with no justification." 
                + " Provided Information:\n")
 
-#we do want a singleton class I think
-#this is to ensure that the configuration is only set once
-#and that the configuration is consistent across all modules
-class Config:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __init__(self, ncbi_key=None, openai_key=None, 
-                 model="gpt-4-0125-preview", 
-                 prompt=BASE_PROMPT, max_tokens=250000):
-        if not hasattr(self, '_initialized'):
-            self.openai_key = openai_key
-            self.model = model
-            self.ncbi_key = ncbi_key
-            self.prompt = prompt
-            self.max_tokens = max_tokens
-            self._initialized = True
-
-    def ncbi_key(self, ncbi_key):
-        self.ncbi_key = ncbi_key
-
-    def openai_key(self, openai_key):
-        self.openai_key = openai_key
-
-    def model(self, model):
-        self.model = model
-
-    def prompt(self, prompt):
-        self.prompt = prompt
-
-    def token_limit(self, max_tokens):
-        self.max_tokens = max_tokens
-
-    def properties(self):
-        if self.openai_key is None:
-            openai_key_display = None
-        else:
-            openai_key_display = "*" * len(self.openai_key)
-        if self.ncbi_key is None:
-            ncbi_key_display = None
-        else:
-            ncbi_key_display =  "*" * len(self.ncbi_key)
-
-        return {"ncbi_key": openai_key_display,
-                "openai_key": ncbi_key_display, 
-                "model": self.model,
-                "prompt": self.prompt,
-                "token_limit": self.max_tokens
-                }
-    
-
-#NOT SINGLETON
 class Config:
     def __init__(self, ncbi_key=None, openai_key=None, 
                  model="gpt-4-0125-preview", 
@@ -84,7 +26,6 @@ class Config:
         self.ncbi_key = ncbi_key
         self.prompt = prompt
         self.max_tokens = max_tokens
-        self._initialized = True
     
     def ncbi_key(self, ncbi_key):
         self.ncbi_key = ncbi_key
@@ -99,6 +40,15 @@ class Config:
         self.prompt = prompt
 
     def token_limit(self, max_tokens):
+        self.max_tokens = max_tokens
+
+    def configure(self, ncbi_key=None, openai_key=None, 
+                 model="gpt-4-0125-preview", 
+                 prompt=BASE_PROMPT, max_tokens=250000):
+        self.openai_key = openai_key
+        self.model = model
+        self.ncbi_key = ncbi_key
+        self.prompt = prompt
         self.max_tokens = max_tokens
 
     def properties(self):

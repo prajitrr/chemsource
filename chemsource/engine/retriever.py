@@ -2,7 +2,6 @@
 #IMPORTANT IN FINAL VERSION, FIGURE OUT HOW TO EITHER QUERY WITHOUT
 #PUBMED KEY OR HOW TO GET A PUBMED KEY FROM USER
 
-from ..config import Config
 from exceptions import XMLParseError, XMLRetrievalError
 from exceptions import XMLParseError2, XMLRetrievalError2, JoinError
 
@@ -16,7 +15,7 @@ SEARCH_PARAMS = {'db': 'pubmed',
                  'retmax': '3',
                  'usehistory': 'n',
                  'sort': 'relevance',
-                 'api_key': Config().ncbi_key
+                 'api_key': None
                  }
 
 XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
@@ -24,30 +23,62 @@ XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'WebEnv': '',
                         'rettype': 'abstract',
                         'retmax': '3',
-                        'api_key': Config().ncbi_key
+                        'api_key': None
                         }
 
-def retrieve(self):
-    try:
-        self.description = wikipedia_retrieve(self.name)
-        self.info_source = "WIKIPEDIA"
-    except:
+def retrieve(name, priority="WIKIPEDIA", single_source=False, ncbikey=None):
+    if (priority == "WIKIPEDIA" and not single_source):
         try:
-            self.description = pubmed_retrieve(self.name)
-            self.info_source = "PUBMED"
+            description = wikipedia_retrieve(name)
+            info_source = "WIKIPEDIA"
         except:
-            self.description = None
-            self.info_source = None
-    return self.info_source, self.description
+            try:
+                description = pubmed_retrieve(name, ncbikey)
+                info_source = "PUBMED"
+            except:
+                description = None
+                info_source = None
+    elif (priority == "PUBMED" and not single_source):
+        try:
+            description = pubmed_retrieve(name, ncbikey)
+            info_source = "PUBMED"
+        except:
+            try:
+                description = wikipedia_retrieve(name)
+                info_source = "WIKIPEDIA"
+            except:
+                description = None
+                info_source = None
     
-def pubmed_retrieve(drug):
+    elif (priority == "WIKIPEDIA" and single_source):
+        try:
+            description = wikipedia_retrieve(name)
+            info_source = "WIKIPEDIA"
+        except:
+            description = None
+            info_source = None
+    
+    else:
+        try:
+            description = pubmed_retrieve(name, ncbikey)
+            info_source = "PUBMED"
+        except:
+            description = None
+            info_source = None
+
+    return info_source, description
+    
+def pubmed_retrieve(drug, ncbikey=None):
     temp_search_params = SEARCH_PARAMS
+    temp_search_params['api_key'] = ncbikey
+
     if (temp_search_params["api_key"] is None):
         del temp_search_params["api_key"]
     temp_search_params['term'] = drug + '[ti]'
 
     try:
-        xml_content = etree.fromstring(r.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", params=temp_search_params).content)
+        xml_content = etree.fromstring(r.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", 
+                                             params=temp_search_params).content)
     except:
         raise XMLParseError
     try:
@@ -57,11 +88,15 @@ def pubmed_retrieve(drug):
         raise XMLRetrievalError
     else:
         temp_retrieval_params = XML_RETRIEVAL_PARAMS
+        temp_retrieval_params['api_key'] = ncbikey
+
         if (temp_retrieval_params["api_key"] is None):
             del temp_retrieval_params["api_key"]
         temp_retrieval_params['WebEnv'] = xml_content.find(".//WebEnv").text
         try:
-            retrieval_content = etree.fromstring(r.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?', params=temp_retrieval_params).content)
+            retrieval_content = etree.fromstring(r.get(('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?'), 
+                                                       params=temp_retrieval_params
+                                                       ).content)
         except:
             raise XMLParseError2
         try:
