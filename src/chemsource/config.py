@@ -51,7 +51,7 @@ class Config:
         self.prompt = prompt
         self.max_tokens = max_tokens
 
-    def properties(self):
+    def configuration(self):
         if self.openai_key is None:
             openai_key_display = None
         else:

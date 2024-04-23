@@ -2,8 +2,8 @@
 #IMPORTANT IN FINAL VERSION, FIGURE OUT HOW TO EITHER QUERY WITHOUT
 #PUBMED KEY OR HOW TO GET A PUBMED KEY FROM USER
 
-from exceptions import XMLParseError, XMLRetrievalError
-from exceptions import XMLParseError2, XMLRetrievalError2, JoinError
+from src.chemsource.exceptions import XMLParseError, XMLRetrievalError
+from src.chemsource.exceptions import XMLParseError2, XMLRetrievalError2, JoinError
 
 from lxml import etree
 import re

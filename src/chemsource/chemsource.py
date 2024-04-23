@@ -1,4 +1,4 @@
-from config import Config
+from src.chemsource.config import Config
 from engine import classifier
 from engine import retriever
 
@@ -40,7 +40,7 @@ class ChemSource(Config):
             raise ValueError("OpenAI API key must be provided")
         
         return classifier.classify(name, 
-                                   information
+                                   information,
                                    self.openai_key,
                                    self.prompt,
                                    self.model,
