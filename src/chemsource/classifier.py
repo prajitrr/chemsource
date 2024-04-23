@@ -11,7 +11,8 @@ def classify(name,
                     api_key=(openaikey)
                     )
 
-    prompt = baseprompt[0] + str(name) + baseprompt[1] + str(input_text)
+    split_base = baseprompt.split("COMPOUND_NAME")
+    prompt = split_base[0] + str(name) + split_base[1] + str(input_text)
     prompt = prompt[:max_length]
 
     response = client.chat.completions.create(

@@ -18,8 +18,8 @@ BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of"
                + " Provided Information:\n")
 
 class Config:
-    def __init__(self, ncbi_key=None, openai_key=None, 
-                 model="gpt-4-0125-preview", 
+    def __init__(self, openai_key=None, 
+                 model="gpt-4-0125-preview", ncbi_key=None,
                  prompt=BASE_PROMPT, max_tokens=250000):
         self.openai_key = openai_key
         self.model = model
@@ -62,8 +62,8 @@ class Config:
         else:
             ncbi_key_display =  "*" * len(self.ncbi_key)
         
-        return {"ncbi_key": openai_key_display,
-                "openai_key": ncbi_key_display, 
+        return {"openai_key": openai_key_display,
+                "ncbi_key": ncbi_key_display, 
                 "model": self.model,
                 "prompt": self.prompt,
                 "token_limit": self.max_tokens
