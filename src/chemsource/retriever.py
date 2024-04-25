@@ -58,13 +58,17 @@ def retrieve(name, priority="WIKIPEDIA", single_source=False, ncbikey=None):
             description = None
             info_source = None
     
-    else:
+    elif (priority == "PUBMED" and single_source):
         try:
             description = pubmed_retrieve(name, ncbikey)
             info_source = "PUBMED"
         except:
             description = None
             info_source = None
+    
+    else:
+        raise ValueError("priority must be either WIKIPEDIA or PUBMED" 
+                         + "and single_source must be a boolean value")
 
     return info_source, description
     
