@@ -1,5 +1,5 @@
-# chemsource v1.0.2
-`chemsource` is a tool to classify novel drugs and other chemicals by source that is currently offered in Python. The current iteration, `v1.0.2`, relies on information scraped from [Wikipedia](https://www.wikipedia.org/) and the NLM's [PubMed](https://pubmed.ncbi.nlm.nih.gov/) abstract database. Information retrieved is classified using OpenAI's [ChatGPT API](https://platform.openai.com/docs/api-reference) into a combination of 5 categories, `MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE,` or `INDUSTRIAL`. Chemicals without enough available information will be classified with the tag `INFO`.
+# chemsource v1.0.3
+`chemsource` is a tool to classify novel drugs and other chemicals by source that is currently offered in Python. The current iteration, `v1.0.3`, relies on information scraped from [Wikipedia](https://www.wikipedia.org/) and the NLM's [PubMed](https://pubmed.ncbi.nlm.nih.gov/) abstract database. Information retrieved is classified using OpenAI's [ChatGPT API](https://platform.openai.com/docs/api-reference) into a combination of 5 categories, `MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE,` or `INDUSTRIAL`. Chemicals without enough available information will be classified with the tag `INFO`.
 
 ## Installation & Setup
 `chemsource` is available on `pypi` [here](https://pypi.org/project/chemsource/) or can alternatively be downloaded directly from the [GitHub repository](https://github.com/prajitrr/chemsource). 
@@ -13,6 +13,8 @@ pip install chemsource
 To use the classification feature of `chemsource`, users must have an OpenAI API key that can be provided to the model along with credits associated with the key. Information on where to find the key can be found [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key). Credits can be added to your OpenAI account [here](https://platform.openai.com/account/billing/overview). Note that new users of the OpenAI API receive $5.00 in free credits, which is a sufficient amount to use `chemsource` for the purposes of small-scale testing. See `Cost` for more information.
 
 ## Usage
+
+### Import and Configuration
 Import the package using the following command:
 ```
 import chemsource
@@ -43,6 +45,7 @@ The output is a dictionary of parameters. The default parameters are displayed h
 
 `token_limit` is a limit on the length of each query sent to OpenAI, in tokens, designed to place a limit on the cost per query of the model. Any text beyond `token_limit` is truncated. For more information, see the next section, [Cost](https://github.com/prajitrr/chemsource?tab=readme-ov-file#cost).
 
+### Classification
 The main classification function can be called using `chemsource()` and requires a single parameter, the name of the chemical or drug to be classified. An example classification on the drug `"melatonin"` is shown below.
 ```
 # Configure a model with an OpenAI API Key, which can be used for multiple classifications
