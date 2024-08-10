@@ -29,6 +29,9 @@ class ChemSource(Config):
                          ncbikey=self.ncbi_key
                          )
         
+        if information[1] == "":
+            return (None, None), None
+        
         return information, cls(name, 
                                 information, 
                                 self.openai_key,
@@ -39,6 +42,9 @@ class ChemSource(Config):
     def classify(self, name, information):
         if self.openai_key is None:
             raise ValueError("OpenAI API key must be provided")
+        
+        if information == "":
+            return None
         
         return cls(name, 
                    information,
