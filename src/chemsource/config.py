@@ -12,17 +12,20 @@ BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of"
                + " Specify INFO instead if more information is needed. DO NOT" 
                + " MAKE ANY ASSUMPTIONS, USE ONLY THE INFORMATION PROVIDED." 
                + " Provide the output as a plain text separated by commas," 
-               + " and provide only the categories listed (either list a" 
+               + " and provide only the categories listed (either list a " 
                + " combination of INDUSTRIAL, ENDOGENOUS, PERSONAL CARE," 
                + " MEDICAL, FOOD or list INFO), with no justification." 
                + " Provided Information:\n")
 
 class Config:
     def __init__(self, openai_key=None, 
-                 model="gpt-4-0125-preview", ncbi_key=None,
+                 model="gpt-4-0125-preview", temperature=0, top_p=0, logprobs=None, ncbi_key=None,
                  prompt=BASE_PROMPT, max_tokens=250000):
         self.openai_key = openai_key
         self.model = model
+        self.temperature = temperature
+        self.top_p = top_p
+        self.logprobs = logprobs
         self.ncbi_key = ncbi_key
         self.prompt = prompt
         self.max_tokens = max_tokens
@@ -41,14 +44,27 @@ class Config:
 
     def token_limit(self, max_tokens):
         self.max_tokens = max_tokens
+    
+    def temperature(self, temperature):
+        self.temperature = temperature
+
+    def top_p(self, top_p):
+        self.top_p = top_p
+    
+    def logprobs(self, logprobs):
+        self.logprobs = logprobs
 
     def configure(self, ncbi_key=None, openai_key=None, 
-                 model="gpt-4-0125-preview", 
+                 model="gpt-4-0125-preview", temperature=0, top_p = 0, 
+                 logprobs=None,
                  prompt=BASE_PROMPT, max_tokens=250000):
         self.openai_key = openai_key
         self.model = model
         self.ncbi_key = ncbi_key
         self.prompt = prompt
+        self.temperature = temperature
+        self.top_p = top_p
+        self.logprobs = logprobs
         self.max_tokens = max_tokens
 
     def configuration(self):
@@ -66,5 +82,8 @@ class Config:
                 "ncbi_key": ncbi_key_display, 
                 "model": self.model,
                 "prompt": self.prompt,
-                "token_limit": self.max_tokens
+                "token_limit": self.max_tokens,
+                "temperature": self.temperature,
+                "top_p": self.top_p,
+                "logprobs": self.logprobs
                 }

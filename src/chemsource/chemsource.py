@@ -9,13 +9,17 @@ class ChemSource(Config):
                  openai_key=None, 
                  model="gpt-4-0125-preview", 
                  ncbi_key=None, 
-                 prompt=BASE_PROMPT, 
+                 prompt=BASE_PROMPT,
+                 temperature=0,
+                 logprobs=None,
                  max_tokens=250000
                  ):
         super().__init__(openai_key=openai_key, 
                          model=model, 
                          ncbi_key=ncbi_key,
                          prompt=prompt, 
+                         temperature=temperature,
+                         logprobs=logprobs,
                          max_tokens=max_tokens
                          )
     
@@ -37,6 +41,9 @@ class ChemSource(Config):
                                 self.openai_key,
                                 self.prompt,
                                 self.model,
+                                self.temperature,
+                                self.top_p,
+                                self.logprobs,
                                 self.max_tokens)
 
     def classify(self, name, information):
@@ -51,6 +58,9 @@ class ChemSource(Config):
                    self.openai_key,
                    self.prompt,
                    self.model,
+                   self.temperature,
+                   self.top_p,
+                   self.logprobs,
                    self.max_tokens)
     
     def retrieve(self, name, priority="WIKIPEDIA", single_source=False):
