@@ -18,10 +18,10 @@ BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of"
                + " Provided Information:\n")
 
 class Config:
-    def __init__(self, openai_key=None, 
+    def __init__(self, model_api_key=None, 
                  model="gpt-4-0125-preview", temperature=0, top_p=0, logprobs=None, ncbi_key=None,
                  prompt=BASE_PROMPT, max_tokens=250000):
-        self.openai_key = openai_key
+        self.model_api_key = model_api_key
         self.model = model
         self.temperature = temperature
         self.top_p = top_p
@@ -33,8 +33,8 @@ class Config:
     def ncbi_key(self, ncbi_key):
         self.ncbi_key = ncbi_key
 
-    def openai_key(self, openai_key):
-        self.openai_key = openai_key
+    def model_api_key(self, model_api_key):
+        self.model_api_key = model_api_key
     
     def model(self, model):
         self.model = model
@@ -54,11 +54,11 @@ class Config:
     def logprobs(self, logprobs):
         self.logprobs = logprobs
 
-    def configure(self, ncbi_key=None, openai_key=None, 
+    def configure(self, ncbi_key=None, model_api_key=None, 
                  model="gpt-4-0125-preview", temperature=0, top_p = 0, 
                  logprobs=None,
                  prompt=BASE_PROMPT, max_tokens=250000):
-        self.openai_key = openai_key
+        self.model_api_key = model_api_key
         self.model = model
         self.ncbi_key = ncbi_key
         self.prompt = prompt
@@ -68,17 +68,17 @@ class Config:
         self.max_tokens = max_tokens
 
     def configuration(self):
-        if self.openai_key is None:
-            openai_key_display = None
+        if self.model_api_key is None:
+            model_api_key_display = None
         else:
-            openai_key_display = "*" * len(self.openai_key)
+           model_api_key_display = "*" * len(self.model_api_key)
 
         if self.ncbi_key is None:
             ncbi_key_display = None
         else:
             ncbi_key_display =  "*" * len(self.ncbi_key)
         
-        return {"openai_key": openai_key_display,
+        return {"model_api_key": model_api_key_display,
                 "ncbi_key": ncbi_key_display, 
                 "model": self.model,
                 "prompt": self.prompt,

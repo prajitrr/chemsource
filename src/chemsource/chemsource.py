@@ -6,7 +6,7 @@ from .retriever import retrieve as ret
 
 class ChemSource(Config):
     def __init__(self, 
-                 openai_key=None, 
+                 model_api_key=None, 
                  model="gpt-4-0125-preview", 
                  ncbi_key=None, 
                  prompt=BASE_PROMPT,
@@ -14,7 +14,7 @@ class ChemSource(Config):
                  logprobs=None,
                  max_tokens=250000
                  ):
-        super().__init__(openai_key=openai_key, 
+        super().__init__(model_api_key=model_api_key, 
                          model=model, 
                          ncbi_key=ncbi_key,
                          prompt=prompt, 
@@ -24,8 +24,8 @@ class ChemSource(Config):
                          )
     
     def chemsource(self, name, priority="WIKIPEDIA", single_source=False):
-        if self.openai_key is None:
-            raise ValueError("OpenAI API key must be provided")
+        if self.model_api_key is None:
+            raise ValueError("Model API key must be provided")
 
         information = ret(name, 
                          priority,
@@ -38,7 +38,7 @@ class ChemSource(Config):
         
         return information, cls(name, 
                                 information, 
-                                self.openai_key,
+                                self.model_api_key,
                                 self.prompt,
                                 self.model,
                                 self.temperature,
@@ -47,15 +47,15 @@ class ChemSource(Config):
                                 self.max_tokens)
 
     def classify(self, name, information):
-        if self.openai_key is None:
-            raise ValueError("OpenAI API key must be provided")
+        if self.model_api_key is None:
+            raise ValueError("Model API key must be provided")
         
         if information == "":
             return None
         
         return cls(name, 
                    information,
-                   self.openai_key,
+                   self.model_api_key,
                    self.prompt,
                    self.model,
                    self.temperature,
