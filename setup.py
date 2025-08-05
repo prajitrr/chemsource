@@ -21,6 +21,7 @@ setup(
     install_requires=[
         "lxml>=4.9.4",
         "openai>=1.23.2",
+        "pyspellchecker>=0.8.1",
         "requests>=2.0.0,<3",
         "wikipedia>=1.4.0",
     ],

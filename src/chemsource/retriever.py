@@ -1,15 +1,26 @@
-#!pip install wikipedia
-#IMPORTANT IN FINAL VERSION, FIGURE OUT HOW TO EITHER QUERY WITHOUT
-#PUBMED KEY OR HOW TO GET A PUBMED KEY FROM USER
+"""
+Information retrieval module for chemical compounds.
 
-from .exceptions import XMLParseError, XMLRetrievalError
-from .exceptions import XMLParseError2, XMLRetrievalError2, JoinError
+This module provides functionality for retrieving chemical compound information
+from various sources including PubMed and Wikipedia.
+"""
+
+from typing import Optional, Tuple
+from .exceptions import (
+    PubMedSearchXMLParseError, 
+    PubMedSearchResultsError,
+    PubMedAbstractXMLParseError, 
+    PubMedAbstractRetrievalError, 
+    PubMedAbstractConcatenationError,
+    WikipediaRetrievalError
+)
 
 from lxml import etree
 import re
 import requests as r
 import wikipedia
 
+#: Default parameters for PubMed search API
 SEARCH_PARAMS = {'db': 'pubmed',
                  'term': '',
                  'retmax': '3',
@@ -18,6 +29,7 @@ SEARCH_PARAMS = {'db': 'pubmed',
                  'api_key': None
                  }
 
+#: Default parameters for PubMed abstract retrieval API
 XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'query_key': '1',
                         'WebEnv': '',
@@ -26,7 +38,37 @@ XML_RETRIEVAL_PARAMS = {'db': 'pubmed',
                         'api_key': None
                         }
 
-def retrieve(name, priority="WIKIPEDIA", single_source=False, ncbikey=None):
+
+def retrieve(name: str, priority: str = "WIKIPEDIA", single_source: bool = False, ncbikey: Optional[str] = None) -> Tuple[str, str]:
+    """
+    Retrieve information about a chemical compound from various sources.
+    
+    This function retrieves information about a chemical compound from multiple sources
+    including Wikipedia and PubMed, with configurable priority and source selection.
+    
+    Args:
+        name (str): The name of the chemical compound to look up.
+        priority (str, optional): Priority source for information retrieval. 
+                                Options: "WIKIPEDIA", "PUBMED". Defaults to "WIKIPEDIA".
+        single_source (bool, optional): Whether to use only the priority source. Defaults to False.
+        ncbikey (str, optional): API key for NCBI/PubMed access.
+    
+    Returns:
+        Tuple[str, str]: A tuple containing (source, content) where source indicates
+                        the data source used and content contains the retrieved information.
+    
+    Raises:
+        PubMedSearchXMLParseError: If PubMed search XML cannot be parsed.
+        PubMedSearchResultsError: If search results cannot be retrieved from PubMed.
+        PubMedAbstractXMLParseError: If PubMed abstract XML cannot be parsed.
+        PubMedAbstractRetrievalError: If abstracts cannot be retrieved from PubMed.
+        PubMedAbstractConcatenationError: If abstract texts cannot be concatenated.
+        WikipediaRetrievalError: If Wikipedia content cannot be retrieved.
+        
+    Example:
+        >>> source, content = retrieve("aspirin")
+        >>> print(f"Retrieved from {source}: {content[:100]}...")
+    """
     if (priority == "WIKIPEDIA" and not single_source):
         try:
             description = wikipedia_retrieve(name)
@@ -72,7 +114,31 @@ def retrieve(name, priority="WIKIPEDIA", single_source=False, ncbikey=None):
 
     return info_source, description
     
-def pubmed_retrieve(drug, ncbikey=None):
+def pubmed_retrieve(drug: str, ncbikey: Optional[str] = None) -> str:
+    """
+    Retrieve abstracts from PubMed for a given compound.
+    
+    This function searches PubMed for articles related to a chemical compound
+    and retrieves the abstracts of the most relevant articles.
+    
+    Args:
+        drug (str): The name of the compound to search for in PubMed.
+        ncbikey (str, optional): API key for NCBI/PubMed access for higher rate limits.
+    
+    Returns:
+        str: Concatenated abstract texts from PubMed articles, or 'NO_RESULTS' if no articles found.
+        
+    Raises:
+        PubMedSearchXMLParseError: If the search XML response cannot be parsed.
+        PubMedSearchResultsError: If search results cannot be retrieved.
+        PubMedAbstractXMLParseError: If abstract XML cannot be parsed.
+        PubMedAbstractRetrievalError: If abstracts cannot be retrieved.
+        PubMedAbstractConcatenationError: If abstract texts cannot be concatenated.
+        
+    Example:
+        >>> abstracts = pubmed_retrieve("aspirin", ncbikey="your_ncbi_key")
+        >>> print(abstracts[:100])
+    """
     temp_search_params = SEARCH_PARAMS
     temp_search_params['api_key'] = ncbikey
 
@@ -84,12 +150,12 @@ def pubmed_retrieve(drug, ncbikey=None):
         xml_content = etree.fromstring(r.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?", 
                                              params=temp_search_params).content)
     except:
-        raise XMLParseError
+        raise PubMedSearchXMLParseError()
     try:
         if (str(xml_content.find(".//Count").text) == 0):
             return 'NO_RESULTS'
     except:
-        raise XMLRetrievalError
+        raise PubMedSearchResultsError()
     else:
         temp_retrieval_params = XML_RETRIEVAL_PARAMS
         temp_retrieval_params['api_key'] = ncbikey
@@ -102,22 +168,45 @@ def pubmed_retrieve(drug, ncbikey=None):
                                                        params=temp_retrieval_params
                                                        ).content)
         except:
-            raise XMLParseError2
+            raise PubMedAbstractXMLParseError()
         try:
             abstracts = retrieval_content.findall(".//AbstractText")
         except:
-            raise XMLRetrievalError2
+            raise PubMedAbstractRetrievalError()
         result = ''
         try:
             for abstract in abstracts:
                 result = result + ' ' + abstract.text
         except:
-            raise JoinError
+            raise PubMedAbstractConcatenationError()
         return result
 
-def wikipedia_retrieve(drug):
-    description = wikipedia.page(drug, auto_suggest=False).content
-    description = description.replace('\n', ' ')
-    description = description.replace('\t', ' ')
-    description = ' '.join(description.split())
-    return description
+
+def wikipedia_retrieve(drug: str) -> str:
+    """
+    Retrieve content from Wikipedia for a given compound.
+    
+    This function fetches the Wikipedia page content for a chemical compound
+    and processes it by removing newlines, tabs, and extra spaces.
+    
+    Args:
+        drug (str): The name of the compound to look up on Wikipedia.
+    
+    Returns:
+        str: The processed Wikipedia content with cleaned formatting.
+        
+    Raises:
+        WikipediaRetrievalError: If Wikipedia content cannot be retrieved.
+        
+    Example:
+        >>> content = wikipedia_retrieve("aspirin")
+        >>> print(content[:100])
+    """
+    try:
+        description = wikipedia.page(drug, auto_suggest=False).content
+        description = description.replace('\n', ' ')
+        description = description.replace('\t', ' ')
+        description = ' '.join(description.split())
+        return description
+    except Exception as e:
+        raise WikipediaRetrievalError(f"Failed to retrieve Wikipedia content for '{drug}': {str(e)}")
