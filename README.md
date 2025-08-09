@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/chemsource.svg)](https://badge.fury.io/py/chemsource)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 
-chemsource is a Python tool for exposomics research that classifies chemical compounds based on their exposure sources. It retrieves information from Wikipedia and PubMed, then uses large language models to classify chemicals into categories such as MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE, and INDUSTRIAL.
+chemsource is a Python tool for exposomics research that classifies chemical compounds based on their exposure sources. It retrieves information from Wikipedia and PubMed, then uses large language models to classify chemicals into user-defined categories.
 
 
 ## Quick Start
