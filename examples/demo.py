@@ -1,32 +1,20 @@
 #!/usr/bin/env python3
 """
-Demo script for chemsou        print("   ChemSource with custom configuration created successfully")
-        
-        # Verify some parameters
-        assert chem_configured.model == "gpt-3.        except Exception as e:
-            print(f"   Wikipedia retrieval failed: {e}")
-        except Exception as e:
-            print(f"   Unexpected error in retrieval: {e}")
-            
-    except Exception as e:
-        print(f"   Error in offline retrieval test: {e}")
-        return False
-    
-    return True       assert chem_configured.clean_output is False
-        assert chem_configured.allowed_categories == ["MEDICAL", "ENDOGENOUS"]
-        print("   Configuration parameters verified")
-        
-    except Exception as e:
-        print(f"   Error in basic functionality: {e}")
-        return False.
-
 This script demonstrates basic usage of the chemsource package and can be used
 to verify that the installation is working correctly.
 
 Usage:
     python examples/demo.py [--with-api-key YOUR_OPENAI_KEY]
+    python examples/demo.py [--with-gemini-key YOUR_GEMINI_KEY]
+    python examples/demo.py [--no-api-only]
     
-If no API key is provided, the script will only demonstrate offline functionality.
+Options:
+    --with-api-key: Test with OpenAI API for full functionality
+    --with-gemini-key: Test with Google Gemini API for full functionality  
+    --no-api-only: Test only features that don't require AI API keys
+                   (still requires internet for Wikipedia access)
+    
+If no API key is provided, the script will demonstrate non-AI functionality.
 """
 import argparse
 import sys
@@ -205,16 +193,17 @@ def demo_with_gemini_api(api_key):
     return True
 
 
-def demo_offline_retrieval():
-    """Demonstrate retrieval functionality that doesn't require OpenAI API."""
-    print("\n5. Testing offline retrieval capabilities...")
+def demo_no_api_retrieval():
+    """Demonstrate retrieval functionality that doesn't require AI API keys."""
+    print("\n5. Testing retrieval without AI API keys...")
     
     try:
-        chem = ChemSource()  # No API key needed for retrieval only
+        chem = ChemSource()  # No AI API key needed for retrieval only
         
-        # Test Wikipedia retrieval (doesn't need OpenAI API)
+        # Test Wikipedia retrieval (requires internet but no AI API)
         test_compound = "caffeine"
         print(f"   Testing Wikipedia retrieval for: {test_compound}")
+        print("   (Note: This requires internet access to Wikipedia)")
         
         try:
             info = chem.retrieve(test_compound, priority="WIKIPEDIA")
@@ -229,7 +218,7 @@ def demo_offline_retrieval():
             print(f"   Unexpected error in retrieval: {e}")
             
     except Exception as e:
-        print(f"   Error in offline retrieval test: {e}")
+        print(f"   Error in no-API retrieval test: {e}")
         return False
     
     return True
@@ -242,8 +231,8 @@ def main():
                        help='OpenAI API key for testing live functionality')
     parser.add_argument('--with-gemini-key',
                        help='Google Gemini API key for testing Gemini integration')
-    parser.add_argument('--offline-only', action='store_true',
-                       help='Skip tests that require internet connection')
+    parser.add_argument('--no-api-only', action='store_true',
+                       help='Test only functionality that doesn\'t require AI API keys (still needs internet for Wikipedia)')
     
     args = parser.parse_args()
     
@@ -257,9 +246,13 @@ def main():
         print("Please check your installation with: pip install -e .")
         sys.exit(1)
     
-    # Test offline retrieval if not in offline-only mode
-    if not args.offline_only:
-        success &= demo_offline_retrieval()
+    # Test retrieval without AI API keys
+    if args.no_api_only:
+        # In no-api-only mode, test retrieval capabilities without AI APIs
+        success &= demo_no_api_retrieval()
+    elif not args.with_api_key and not args.with_gemini_key:
+        # If no API keys provided but not no-api-only, still test non-AI retrieval
+        success &= demo_no_api_retrieval()
     
     # Test with OpenAI API key if provided
     if args.with_api_key:

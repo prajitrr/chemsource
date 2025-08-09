@@ -141,7 +141,7 @@ def test_gemini_integration():
             custom_client=custom_client,
             model='gemini-2.5-flash',
             clean_output=True,
-            allowed_categories=['MEDICAL', 'FOOD', 'INDUSTRIAL', 'PERSONAL CARE', 'ENDOGENOUS']
+            allowed_categories=['MEDICAL', 'FOOD', 'INDUSTRIAL', 'PERSONAL CARE', 'ENDOGENOUS', 'INFO']
         )
         
         info, classification = chem_clean.chemsource('caffeine')

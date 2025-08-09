@@ -152,7 +152,7 @@ def pubmed_retrieve(drug: str, ncbikey: Optional[str] = None) -> str:
     except:
         raise PubMedSearchXMLParseError()
     try:
-        if (str(xml_content.find(".//Count").text) == 0):
+        if (str(xml_content.find(".//Count").text) == "0"):
             return 'NO_RESULTS'
     except:
         raise PubMedSearchResultsError()

@@ -84,7 +84,7 @@ For structured output with spell checking and validation:
     chem = ChemSource(
         model_api_key="your_openai_api_key",
         clean_output=True,
-        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS, INFO"]
     )
     
     info, classification = chem.chemsource("ibuprofen")

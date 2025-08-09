@@ -31,7 +31,7 @@ Advanced Configuration
         model="gpt-4-0125-preview",
         temperature=0.0,  # More deterministic output
         clean_output=True,  # Enable output cleaning
-        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
     )
     
     # Classify with clean output
@@ -70,7 +70,7 @@ Batch Processing
     chem = ChemSource(
         model_api_key="your_openai_api_key",
         clean_output=True,
-        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
     )
     
     compounds = ["aspirin", "glucose", "sodium chloride", "retinol", "benzene"]
@@ -142,7 +142,7 @@ Google Gemini Integration
         custom_client=gemini_client,
         model="gemini-2.5-flash",
         clean_output=True,
-        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
     )
     
     info, clean_classification = chem_clean.chemsource("vitamin c")

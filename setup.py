@@ -1,11 +1,18 @@
 from setuptools import setup, find_packages
 from pathlib import Path
+import os
+import sys
+
+# Add src to path to import version
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+from chemsource import __version__
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="chemsource",
+    version=__version__,
     author="Prajit Rajkumar",
     author_email="prajkumar@ucsd.edu",
     description="Tool to classify novel drugs and other health-related" 

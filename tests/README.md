@@ -104,8 +104,8 @@ python examples/demo.py --with-api-key your_openai_api_key
 # Demo with Google Gemini API key (tests Gemini integration)
 python examples/demo.py --with-gemini-key your_gemini_api_key
 
-# Offline mode (skip internet-dependent tests)
-python examples/demo.py --offline-only
+# No-API mode (test without AI API keys, internet still required for Wikipedia)
+python examples/demo.py --no-api-only
 ```
 
 ## Test Requirements

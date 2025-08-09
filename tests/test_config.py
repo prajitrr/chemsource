@@ -53,7 +53,7 @@ class TestConfig(unittest.TestCase):
     def test_base_prompt_contains_expected_content(self):
         """Test that BASE_PROMPT contains expected classification categories."""
         from chemsource.config import BASE_PROMPT
-        expected_categories = ["MEDICAL", "ENDOGENOUS", "FOOD", "PERSONAL CARE", "INDUSTRIAL"]
+        expected_categories = ["MEDICAL", "ENDOGENOUS", "FOOD", "PERSONAL CARE", "INDUSTRIAL", "INFO"]
         
         for category in expected_categories:
             self.assertIn(category, BASE_PROMPT)

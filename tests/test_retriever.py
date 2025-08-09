@@ -63,6 +63,8 @@ class TestRetriever(unittest.TestCase):
             <Count>0</Count>
             <IdList>
             </IdList>
+            <WebEnv>NCID_1_123456789_130.14.22.76_9001_1234567890_123456789</WebEnv>
+            <QueryKey>1</QueryKey>
         </eSearchResult>
         '''
         
@@ -70,7 +72,7 @@ class TestRetriever(unittest.TestCase):
         
         result = pubmed_retrieve("nonexistent_compound", ncbikey="test_key")
         
-        self.assertIsNone(result)
+        self.assertEqual(result, 'NO_RESULTS')  # Should return 'NO_RESULTS' for zero count
         self.assertEqual(mock_get.call_count, 1)
     
     @patch('chemsource.retriever.r.get')
@@ -89,9 +91,8 @@ class TestRetriever(unittest.TestCase):
         """Test PubMed retrieval with request failure."""
         mock_get.side_effect = Exception("Network error")
         
-        result = pubmed_retrieve("aspirin", ncbikey="test_key")
-        
-        self.assertIsNone(result)
+        with self.assertRaises(PubMedSearchXMLParseError):
+            pubmed_retrieve("aspirin", ncbikey="test_key")
     
     @patch('chemsource.retriever.wikipedia.page')
     def test_get_wikipedia_info_success(self, mock_page):
