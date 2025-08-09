@@ -4,7 +4,7 @@ Installation
 Requirements
 ============
 
-chemsource requires Python 3.6 or later.
+chemsource requires Python 3.8 or later.
 
 Install from PyPI
 -----------------

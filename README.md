@@ -2,7 +2,8 @@
 
 [![Documentation Status](https://readthedocs.org/projects/chemsource/badge/?version=latest)](https://chemsource.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/chemsource.svg)](https://badge.fury.io/py/chemsource)
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 chemsource is a Python tool for exposomics research that classifies chemical compounds based on their exposure sources. It retrieves information from Wikipedia and PubMed, then uses large language models to classify chemicals into user-defined categories.
 
@@ -43,7 +44,7 @@ The documentation includes:
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.8+
 - OpenAI (or other LLM) API key (for classification)
 - NCBI API key (optional, for enhanced PubMed access)
 
