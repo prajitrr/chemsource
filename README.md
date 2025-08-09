@@ -32,7 +32,7 @@ pip install chemsource
 
 For detailed documentation, tutorials, and API reference, visit:
 
-**[📖 Read the Docs](https://chemsource.readthedocs.io/)**
+**[Read the Docs](https://chemsource.readthedocs.io/)**
 
 The documentation includes:
 - Installation and setup instructions
@@ -53,7 +53,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Citation
 
-If you use ChemSource in your research, please cite:
+If you use chemsource in your research, please cite:
 (Preprint coming soon)
 
 ```
@@ -61,10 +61,10 @@ If you use ChemSource in your research, please cite:
 
 ## Support
 
-- 📚 [Documentation](https://chemsource.readthedocs.io/)
-- 🐛 [Issue Tracker](https://github.com/prajitrr/chemsource/issues)
-- 📧 [Contact](mailto:prajkumar@ucsd.edu)
+- [Documentation](https://chemsource.readthedocs.io/)
+- [Issue Tracker](https://github.com/prajitrr/chemsource/issues)
+- [Contact](mailto:prajkumar@ucsd.edu)
 
 ---
 
-**Note**: ChemSource uses OpenAI's API services which incur costs based on usage. New users receive $5 in free credits, sufficient for testing purposes.
+**Note**: chemsource uses OpenAI's API services which incur costs based on usage. New users receive $5 in free credits, sufficient for testing purposes. Other lower-cost endpoints are also available for classification (e.g. DeepSeek, gpt-oss, etc.). In particular, as of the creation of this package, Google Gemini provides a reasonable amount of free API credits. 

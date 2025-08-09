@@ -8,10 +8,10 @@ Classes:
     ChemSource: Main class for chemical compound classification and information retrieval.
 
 Version:
-    1.0.9
+    1.1.14
 """
 
-__version__ = "1.0.9"
+__version__ = "1.1.14"
 __author__ = "Prajit Rajkumar"
 __email__ = "prajkumar@ucsd.edu"
 

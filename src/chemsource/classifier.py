@@ -79,9 +79,12 @@ def classify(name: str,
     prompt = split_base[0] + str(name) + split_base[1] + str(input_text)
     prompt = prompt[:max_length]
 
+    # Use user role for custom clients (like Gemini) that may not support system messages
+    message_role = "user" if custom_client is not None else "system"
+    
     response = client.chat.completions.create(
         model=model,
-        messages=[{"role": "system", "content": prompt}],
+        messages=[{"role": message_role, "content": prompt}],
         temperature=temperature,
         top_p=top_p,
         stream=False

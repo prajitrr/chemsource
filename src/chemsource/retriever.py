@@ -1,8 +1,8 @@
 """
-Information retrieval module for chemical compounds.
+Information retrieval module for chemsource.
 
-This module provides functionality for retrieving chemical compound information
-from various sources including PubMed and Wikipedia.
+This module handles the retrieval of information from various sources such as
+PubMed and Wikipedia for chemical research purposes.
 """
 
 from typing import Optional, Tuple

@@ -4,6 +4,12 @@ pyspellchecker
 requests
 wikipedia
 
+# Testing dependencies (optional, for development)
+# unittest is built-in to Python, but these enhance testing
+coverage>=6.0  # For test coverage reports
+pytest>=6.0  # Alternative test runner (optional)
+pytest-cov>=3.0  # Coverage for pytest (optional)
+
 # Documentation dependencies
 sphinx>=4.0
 sphinx-rtd-theme>=1.0

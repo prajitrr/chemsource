@@ -120,8 +120,8 @@ class ChemSource(Config):
             >>> print(info[1])  # Content
             >>> print(classification)  # Classification result
         """
-        if self.model_api_key is None:
-            raise ValueError("Model API key must be provided")
+        if self.model_api_key is None and self.custom_client is None:
+            raise ValueError("Either model_api_key or custom_client must be provided")
 
         information = ret(name, 
                          priority,
@@ -163,7 +163,7 @@ class ChemSource(Config):
                                            strings (if clean_output=True).
         
         Raises:
-            ValueError: If model_api_key is not provided.
+            ValueError: If neither model_api_key nor custom_client is provided.
             
         Example:
             >>> chem = ChemSource(model_api_key="your_key")
@@ -171,8 +171,8 @@ class ChemSource(Config):
             >>> print(result)
             "MEDICAL"
         """
-        if self.model_api_key is None:
-            raise ValueError("Model API key must be provided")
+        if self.model_api_key is None and self.custom_client is None:
+            raise ValueError("Either model_api_key or custom_client must be provided")
         
         if information == "":
             return None

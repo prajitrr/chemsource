@@ -102,7 +102,6 @@ Custom Client Usage
     from openai import OpenAI
     
     # Create a custom OpenAI client with specific settings
-    # You can also use other API endpoints by changing base_url
     custom_client = OpenAI(
         api_key="your_openai_api_key",
         base_url="https://api.openai.com/v1",
@@ -114,6 +113,41 @@ Custom Client Usage
     
     info, classification = chem.chemsource("morphine")
     print(f"Classification: {classification}")
+
+Google Gemini Integration
+-------------------------
+
+.. code-block:: python
+
+    from chemsource import ChemSource
+    from openai import OpenAI
+    
+    # Create a custom client for Google Gemini API
+    gemini_client = OpenAI(
+        api_key="your_gemini_api_key",
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
+    
+    # Use Gemini for classification
+    chem = ChemSource(
+        custom_client=gemini_client,
+        model="gemini-2.5-flash"
+    )
+    
+    info, classification = chem.chemsource("aspirin")
+    print(f"Gemini classification: {classification}")
+    
+    # Use with clean output and category filtering
+    chem_clean = ChemSource(
+        custom_client=gemini_client,
+        model="gemini-2.5-flash",
+        clean_output=True,
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+    )
+    
+    info, clean_classification = chem_clean.chemsource("vitamin c")
+    print(f"Clean classification: {clean_classification}")
+    # Output: ['MEDICAL', 'FOOD']
 
 Error Handling
 --------------
