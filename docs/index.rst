@@ -13,8 +13,8 @@ PubMed and Wikipedia, and classify compounds using AI language models.
 
    installation
    quickstart
-   api
    examples
+   api
 
 Indices and tables
 ==================

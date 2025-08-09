@@ -29,7 +29,6 @@ Advanced Configuration
     chem = ChemSource(
         model_api_key="your_openai_api_key",
         model="gpt-4o",
-        temperature=0.0,  # More deterministic output
         clean_output=True,  # Enable output cleaning
         allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
     )

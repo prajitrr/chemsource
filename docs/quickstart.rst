@@ -48,9 +48,10 @@ If you only want to retrieve information without classification:
     
     chem = ChemSource()
     
-    # Retrieve from Wikipedia (default)
+    # Prioritize retrieval from Wikipedia (default)
     source, content = chem.retrieve("caffeine")
     
+    # Prioritize PubMed for retrieval
     source, content = chem.retrieve("caffeine", priority="PUBMED")
 
 Classification Only
