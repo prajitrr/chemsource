@@ -16,7 +16,7 @@ class TestConfig(unittest.TestCase):
         # Test default values
         self.assertIsNone(config.model_api_key)
         self.assertIsNone(config.ncbi_key)
-        self.assertEqual(config.model, "gpt-4-0125-preview")
+        self.assertEqual(config.model, "gpt-4o")
         from chemsource.config import BASE_PROMPT
         self.assertEqual(config.prompt, BASE_PROMPT)
         self.assertFalse(config.clean_output)
@@ -28,7 +28,7 @@ class TestConfig(unittest.TestCase):
         config = Config(
             model_api_key="test_key",
             ncbi_key="test_ncbi",
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             prompt="Custom prompt",
             clean_output=True,
             allowed_categories=["MEDICAL", "FOOD"],
@@ -37,7 +37,7 @@ class TestConfig(unittest.TestCase):
         
         self.assertEqual(config.model_api_key, "test_key")
         self.assertEqual(config.ncbi_key, "test_ncbi")
-        self.assertEqual(config.model, "gpt-3.5-turbo")
+        self.assertEqual(config.model, "gpt-4o")
         self.assertEqual(config.prompt, "Custom prompt")
         self.assertTrue(config.clean_output)
         self.assertEqual(config.allowed_categories, ["MEDICAL", "FOOD"])

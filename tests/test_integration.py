@@ -104,13 +104,13 @@ class TestPackageIntegration(unittest.TestCase):
             
             # Test ChemSource creation with config parameters
             chem = ChemSource(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 clean_output=False,
                 allowed_categories=["MEDICAL"]
             )
             
             # Verify parameters were set correctly
-            self.assertEqual(chem.model, "gpt-3.5-turbo")
+            self.assertEqual(chem.model, "gpt-4o")
             self.assertFalse(chem.clean_output)
             self.assertEqual(chem.allowed_categories, ["MEDICAL"])
             

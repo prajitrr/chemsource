@@ -25,7 +25,7 @@ class ChemSource(Config):
     
     Args:
         model_api_key (str, optional): API key for the language model service.
-        model (str, optional): Name of the language model to use. Defaults to "gpt-4-0125-preview".
+        model (str, optional): Name of the language model to use. Defaults to "gpt-4o".
         ncbi_key (str, optional): API key for NCBI/PubMed access.
         prompt (str, optional): Custom prompt template. Defaults to BASE_PROMPT.
         temperature (float, optional): Temperature parameter for model creativity. Defaults to 0.
@@ -53,7 +53,7 @@ class ChemSource(Config):
     
     def __init__(self, 
                  model_api_key: Optional[str] = None, 
-                 model: str = "gpt-4-0125-preview", 
+                 model: str = "gpt-4o", 
                  ncbi_key: Optional[str] = None, 
                  prompt: str = BASE_PROMPT,
                  temperature: float = 0,

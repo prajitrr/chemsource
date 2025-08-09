@@ -36,7 +36,7 @@ class Config:
     
     Args:
         model_api_key (str, optional): API key for the language model service.
-        model (str, optional): Name of the language model to use. Defaults to "gpt-4-0125-preview".
+        model (str, optional): Name of the language model to use. Defaults to "gpt-4o".
         temperature (float, optional): Temperature parameter for model creativity. Defaults to 0.
         top_p (float, optional): Top-p parameter for nucleus sampling. Defaults to 0.
         ncbi_key (str, optional): API key for NCBI/PubMed access.
@@ -61,7 +61,7 @@ class Config:
     
     def __init__(self, 
                  model_api_key: Optional[str] = None, 
-                 model: str = "gpt-4-0125-preview", 
+                 model: str = "gpt-4o", 
                  temperature: float = 0, 
                  top_p: float = 0, 
                  ncbi_key: Optional[str] = None,
@@ -174,7 +174,7 @@ class Config:
     def configure(self, 
                   ncbi_key: Optional[str] = None, 
                   model_api_key: Optional[str] = None, 
-                  model: str = "gpt-4-0125-preview", 
+                  model: str = "gpt-4o", 
                   temperature: float = 0, 
                   top_p: float = 0, 
                   prompt: str = BASE_PROMPT, 
@@ -188,7 +188,7 @@ class Config:
         Args:
             ncbi_key (str, optional): API key for NCBI/PubMed access.
             model_api_key (str, optional): API key for the language model service.
-            model (str, optional): Name of the language model to use. Defaults to "gpt-4-0125-preview".
+            model (str, optional): Name of the language model to use. Defaults to "gpt-4o".
             temperature (float, optional): Temperature parameter for model creativity. Defaults to 0.
             top_p (float, optional): Top-p parameter for nucleus sampling. Defaults to 0.
             prompt (str, optional): Custom prompt template. Defaults to BASE_PROMPT.

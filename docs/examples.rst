@@ -28,7 +28,7 @@ Advanced Configuration
     # Use custom configuration
     chem = ChemSource(
         model_api_key="your_openai_api_key",
-        model="gpt-4-0125-preview",
+        model="gpt-4o",
         temperature=0.0,  # More deterministic output
         clean_output=True,  # Enable output cleaning
         allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
@@ -48,7 +48,7 @@ Using Different Information Sources
     
     chem = ChemSource(
         model_api_key="your_openai_api_key",
-        ncbi_key="your_ncbi_key"  # Optional for PubMed access
+        ncbi_key="your_ncbi_key"  # Optional for higher PubMed access rates
     )
     
     # Use Wikipedia as primary source (default)
@@ -149,30 +149,6 @@ Google Gemini Integration
     print(f"Clean classification: {clean_classification}")
     # Output: ['MEDICAL', 'FOOD']
 
-Error Handling
---------------
-
-.. code-block:: python
-
-    from chemsource import ChemSource
-    from chemsource.exceptions import (
-        PubMedSearchXMLParseError,
-        WikipediaRetrievalError
-    )
-    
-    chem = ChemSource(model_api_key="your_openai_api_key")
-    
-    try:
-        info, classification = chem.chemsource("nonexistent_compound")
-    except WikipediaRetrievalError as e:
-        print(f"Wikipedia error: {e}")
-    except PubMedSearchXMLParseError as e:
-        print(f"PubMed error: {e}")
-    except ValueError as e:
-        print(f"Configuration error: {e}")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-
 Updating Configuration
 ----------------------
 
@@ -185,7 +161,7 @@ Updating Configuration
     # Update configuration after initialization
     chem.configure(
         model_api_key="your_openai_api_key",
-        model="gpt-4",
+        model="gpt-4o",
         temperature=0.1,
         clean_output=True,
         allowed_categories=["MEDICAL", "FOOD"]
@@ -196,7 +172,6 @@ Updating Configuration
     print(config)
     
     # Use individual setters
-    chem.temperature(0.2)
-    chem.model("gpt-3.5-turbo")
+    chem.model("gpt-4.1")
     
     info, classification = chem.chemsource("insulin")

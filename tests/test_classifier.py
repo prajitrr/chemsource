@@ -230,14 +230,14 @@ class TestClassifier(unittest.TestCase):
                 input_text="test",
                 api_key="test_key",
                 baseprompt="Classify COMPOUND_NAME: ",
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 temperature=0.5,
                 top_p=0.9
             )
         
         # Verify model parameters were passed
         call_args = self.mock_client.chat.completions.create.call_args
-        self.assertEqual(call_args[1]['model'], "gpt-3.5-turbo")
+        self.assertEqual(call_args[1]['model'], "gpt-4o")
         self.assertEqual(call_args[1]['temperature'], 0.5)
         self.assertEqual(call_args[1]['top_p'], 0.9)
         self.assertEqual(call_args[1]['stream'], False)

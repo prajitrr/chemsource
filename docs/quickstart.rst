@@ -32,10 +32,9 @@ You can configure chemsource with various parameters:
     # Configure with custom settings
     chem = ChemSource(
         model_api_key="your_openai_api_key",
-        model="gpt-4-0125-preview",
-        temperature=0.1,
+        model="gpt-4o",
         clean_output=True,
-        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS"]
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
     )
 
 Retrieving Information Only
@@ -52,8 +51,6 @@ If you only want to retrieve information without classification:
     # Retrieve from Wikipedia (default)
     source, content = chem.retrieve("caffeine")
     
-    # Retrieve from PubMed (requires NCBI key)
-    chem.ncbi_key = "your_ncbi_key"
     source, content = chem.retrieve("caffeine", priority="PUBMED")
 
 Classification Only

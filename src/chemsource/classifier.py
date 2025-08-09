@@ -14,7 +14,7 @@ def classify(name: str,
              input_text: Optional[str] = None, 
              api_key: Optional[str] = None, 
              baseprompt: Optional[str] = None,
-             model: str = 'gpt-4-0125-preview', 
+             model: str = 'gpt-4o', 
              temperature: float = 0,
              top_p: float = 0,
              max_length: int = 250000,
@@ -33,7 +33,7 @@ def classify(name: str,
         input_text (str, optional): Additional information about the compound.
         api_key (str, optional): API key for the language model service.
         baseprompt (str, optional): Base prompt template for classification.
-        model (str, optional): Name of the language model to use. Defaults to 'gpt-4-0125-preview'.
+        model (str, optional): Name of the language model to use. Defaults to 'gpt-4o'.
         temperature (float, optional): Temperature parameter for model creativity. Defaults to 0.
         top_p (float, optional): Top-p parameter for nucleus sampling. Defaults to 0.
         max_length (int, optional): Maximum length of the prompt in characters. Defaults to 250000.

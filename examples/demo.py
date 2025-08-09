@@ -50,14 +50,14 @@ def demo_basic_functionality():
         
         # Test ChemSource with parameters
         chem_configured = ChemSource(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             clean_output=False,
             allowed_categories=["MEDICAL", "ENDOGENOUS"]
         )
         print("   ChemSource with custom configuration created successfully")
         
         # Verify configuration
-        assert chem_configured.model == "gpt-3.5-turbo"
+        assert chem_configured.model == "gpt-4o"
         assert chem_configured.clean_output is False
         assert chem_configured.allowed_categories == ["MEDICAL", "ENDOGENOUS"]
         print("   Configuration parameters verified")
