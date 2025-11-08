@@ -7,24 +7,27 @@ This module contains configuration classes and constants used throughout the che
 from typing import Optional, List, Any
 
 #: Default prompt template for chemical compound classification
-BASE_PROMPT = ("Classify this compound, COMPOUND_NAME, as any combination of" 
-               + " the following: MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE,"
-               + " INDUSTRIAL. Note that ENDOGENOUS refers to compounds that" 
-               + " are human synthesized. ENDOGENOUS excludes essential" 
-               + " nutrients that cannot be synthesized by the human body. Note"
-               + " that FOOD refers to compounds present in natural food" 
-               + " items. Note that INDUSTRIAL should be used only for" 
-               + " compounds not used as a contributing ingredient in the" 
-               + " medical, personal care, or food industries. Note that" 
-               + " PERSONAL CARE refers to non-medicated compounds typically" 
-               + " used for activities such as skincare, beauty, and fitness." 
-               + " Specify INFO instead if more information is needed. DO NOT" 
-               + " MAKE ANY ASSUMPTIONS, USE ONLY THE INFORMATION PROVIDED." 
-               + " Provide the output as a plain text separated by commas," 
-               + " and provide only the categories listed (either list a " 
-               + " combination of INDUSTRIAL, ENDOGENOUS, PERSONAL CARE," 
-               + " MEDICAL, FOOD or list INFO), with no justification." 
-               + " Provided Information:\n")
+BASE_PROMPT = ("You are a helpful scientist that will classify the provided compound \
+COMPOUND_NAME using only the information provided as any combination of the \
+following: MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE, INDUSTRIAL. Note that \
+MEDICAL refers to compounds actively used as approved medications in \
+humans or in late-stage clinical trials in humans. Note that ENDOGENOUS \
+refers to compounds that are produced by the human body specifically. \
+ENDOGENOUS excludes essential nutrients that cannot be synthesized by the \
+human body. Note that FOOD refers to compounds present in natural food items \
+or food additives. Note that PERSONAL CARE refers to non-medicated compounds \
+typically used for activities such as skincare, beauty, and fitness. Note \
+that INDUSTRIAL should be used only for synthetic compounds not used as a \
+contributing ingredient in the medical, personal care, or food industries. \
+Specify INFO instead if more information is needed. DO NOT MAKE ANY \
+ASSUMPTIONS, USE ONLY THE INFORMATION PROVIDED AFTER THE COMPOUND NAME \
+BY THE USER. A classification of INFO will also be rewarded when \
+correctly applied and is strongly encouraged if information is of poor \
+quality, if there is not enough information, or if you are not completely \
+confident in your answer.  Provide the output as a plain text separated \
+by commas, and provide only the categories listed (either list a \
+combination of INDUSTRIAL, ENDOGENOUS, PERSONAL CARE, MEDICAL, FOOD or \
+list INFO), with no justification. Provided Information:\n")
 
 
 class Config:
@@ -43,6 +46,11 @@ class Config:
         prompt (str, optional): Custom prompt template. Defaults to BASE_PROMPT.
         max_tokens (int, optional): Maximum number of tokens for model context. Defaults to 250000.
         clean_output (bool, optional): Whether to clean and validate output. Defaults to False.
+        explanation (bool, optional): Whether to expect explanations in model responses. 
+                                     Only effective when clean_output=True. Defaults to False.
+        explanation_separator (str, optional): Delimiter separating explanation from classification.
+                                              Only used when both clean_output and explanation are True.
+                                              Defaults to "EXPLANATION_COMPLETE".
         allowed_categories (List[str], optional): List of allowed categories for filtering. Defaults to None.
         custom_client (Any, optional): Custom OpenAI client instance. Defaults to None.
     
@@ -55,6 +63,8 @@ class Config:
         prompt (str): The prompt template.
         max_tokens (int): The maximum token limit.
         clean_output (bool): Whether output cleaning is enabled.
+        explanation (bool): Whether to extract explanations from responses.
+        explanation_separator (str): The delimiter for separating explanations.
         allowed_categories (List[str]): The allowed categories list.
         custom_client (Any): The custom client instance.
     """
@@ -63,11 +73,13 @@ class Config:
                  model_api_key: Optional[str] = None, 
                  model: str = "gpt-4o", 
                  temperature: float = 0, 
-                 top_p: float = 0, 
+                 top_p: float = 0.0000001, 
                  ncbi_key: Optional[str] = None,
                  prompt: str = BASE_PROMPT, 
                  max_tokens: int = 250000, 
                  clean_output: bool = False, 
+                 explanation: bool = False,
+                 explanation_separator: str = "EXPLANATION_COMPLETE",
                  allowed_categories: Optional[List[str]] = None, 
                  custom_client: Optional[Any] = None) -> None:
         self.model_api_key = model_api_key
@@ -78,10 +90,12 @@ class Config:
         self.prompt = prompt
         self.max_tokens = max_tokens
         self.clean_output = clean_output
+        self.explanation = explanation
+        self.explanation_separator = explanation_separator
         self.allowed_categories = allowed_categories
         self.custom_client = custom_client
     
-    def ncbi_key(self, ncbi_key: Optional[str]) -> None:
+    def set_ncbi_key(self, ncbi_key: Optional[str]) -> None:
         """
         Set the NCBI API key.
         
@@ -90,7 +104,7 @@ class Config:
         """
         self.ncbi_key = ncbi_key
 
-    def model_api_key(self, model_api_key: Optional[str]) -> None:
+    def set_model_api_key(self, model_api_key: Optional[str]) -> None:
         """
         Set the model API key.
         
@@ -98,8 +112,8 @@ class Config:
             model_api_key (str, optional): The model API key to set.
         """
         self.model_api_key = model_api_key
-    
-    def model(self, model: str) -> None:
+
+    def set_model(self, model: str) -> None:
         """
         Set the language model name.
         
@@ -108,7 +122,7 @@ class Config:
         """
         self.model = model
 
-    def prompt(self, prompt: str) -> None:
+    def set_prompt(self, prompt: str) -> None:
         """
         Set the prompt template.
         
@@ -117,7 +131,7 @@ class Config:
         """
         self.prompt = prompt
 
-    def token_limit(self, max_tokens: int) -> None:
+    def set_token_limit(self, max_tokens: int) -> None:
         """
         Set the maximum token limit.
         
@@ -125,8 +139,8 @@ class Config:
             max_tokens (int): The maximum number of tokens for model context.
         """
         self.max_tokens = max_tokens
-    
-    def temperature(self, temperature: float) -> None:
+
+    def set_temperature(self, temperature: float) -> None:
         """
         Set the temperature parameter for model creativity.
         
@@ -135,7 +149,7 @@ class Config:
         """
         self.temperature = temperature
 
-    def top_p(self, top_p: float) -> None:
+    def set_top_p(self, top_p: float) -> None:
         """
         Set the top-p parameter for nucleus sampling.
         
@@ -143,8 +157,8 @@ class Config:
             top_p (float): The top-p value (0.0 to 1.0).
         """
         self.top_p = top_p
-    
-    def clean_output(self, clean_output: bool) -> None:
+
+    def set_clean_output(self, clean_output: bool) -> None:
         """
         Set whether to enable output cleaning and validation.
         
@@ -153,7 +167,25 @@ class Config:
         """
         self.clean_output = clean_output
     
-    def allowed_categories(self, allowed_categories: Optional[List[str]]) -> None:
+    def set_explanation(self, explanation: bool) -> None:
+        """
+        Set whether to include explanations in the output.
+        
+        Args:
+            explanation (bool): Whether to include explanations.
+        """
+        self.explanation = explanation
+    
+    def set_explanation_separator(self, explanation_separator: str) -> None:
+        """
+        Set the explanation separator string.
+        
+        Args:
+            explanation_separator (str): The string that separates explanations in the output.
+        """
+        self.explanation_separator = explanation_separator
+
+    def set_allowed_categories(self, allowed_categories: Optional[List[str]]) -> None:
         """
         Set the list of allowed categories for filtering.
         
@@ -161,8 +193,8 @@ class Config:
             allowed_categories (List[str], optional): List of allowed categories.
         """
         self.allowed_categories = allowed_categories
-    
-    def custom_client(self, custom_client: Optional[Any]) -> None:
+
+    def set_custom_client(self, custom_client: Optional[Any]) -> None:
         """
         Set a custom OpenAI client instance.
         
@@ -176,10 +208,12 @@ class Config:
                   model_api_key: Optional[str] = None, 
                   model: str = "gpt-4o", 
                   temperature: float = 0, 
-                  top_p: float = 0, 
+                  top_p: float = 0,
                   prompt: str = BASE_PROMPT, 
                   max_tokens: int = 250000, 
                   clean_output: bool = False, 
+                  explanation: bool = False,
+                  explanation_separator: str = "EXPLANATION_COMPLETE",
                   allowed_categories: Optional[List[str]] = None, 
                   custom_client: Optional[Any] = None) -> None:
         """
@@ -194,6 +228,9 @@ class Config:
             prompt (str, optional): Custom prompt template. Defaults to BASE_PROMPT.
             max_tokens (int, optional): Maximum number of tokens for model context. Defaults to 250000.
             clean_output (bool, optional): Whether to clean and validate output. Defaults to False.
+            explanation (bool, optional): Whether to expect explanations in model responses. Defaults to False.
+            explanation_separator (str, optional): Delimiter separating explanation from classification.
+                                                  Defaults to "EXPLANATION_COMPLETE".
             allowed_categories (List[str], optional): List of allowed categories for filtering. Defaults to None.
             custom_client (Any, optional): Custom OpenAI client instance. Defaults to None.
         """
@@ -205,6 +242,8 @@ class Config:
         self.top_p = top_p
         self.max_tokens = max_tokens
         self.clean_output = clean_output
+        self.explanation = explanation
+        self.explanation_separator = explanation_separator
         self.allowed_categories = allowed_categories
         self.custom_client = custom_client
 
@@ -233,6 +272,8 @@ class Config:
                 "temperature": self.temperature,
                 "top_p": self.top_p,
                 "clean_output": self.clean_output,
+                "explanation": self.explanation,
+                "explanation_separator": self.explanation_separator,
                 "allowed_categories": self.allowed_categories,
                 "custom_client": self.custom_client
                 }

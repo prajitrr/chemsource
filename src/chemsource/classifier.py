@@ -19,6 +19,8 @@ def classify(name: str,
              top_p: float = 0,
              max_length: int = 250000,
              clean_output: bool = False,
+             explanation: bool = False,
+             explanation_separator: str = "EXPLANATION_COMPLETE",
              allowed_categories: Optional[List[str]] = None,
              custom_client: Optional[Any] = None,
              spell_checker: Optional[SpellChecker] = None) -> Union[str, List[str]]:
@@ -38,6 +40,14 @@ def classify(name: str,
         top_p (float, optional): Top-p parameter for nucleus sampling. Defaults to 0.
         max_length (int, optional): Maximum length of the prompt in characters. Defaults to 250000.
         clean_output (bool, optional): Whether to clean and validate the output. Defaults to False.
+        explanation (bool, optional): Whether to expect and extract explanations from the model response.
+                                     Only used when clean_output=True. The model's response should contain
+                                     an explanation followed by the separator, then the classification.
+                                     Defaults to False.
+        explanation_separator (str, optional): The delimiter string that separates the explanation from 
+                                              the classification in the model's response. Only used when
+                                              both clean_output=True and explanation=True.
+                                              Defaults to "EXPLANATION_COMPLETE".
         allowed_categories (List[str], optional): List of allowed categories for filtering output.
         custom_client (Any, optional): Custom OpenAI client instance.
         spell_checker (SpellChecker, optional): Spell checker instance for output correction.
@@ -48,6 +58,7 @@ def classify(name: str,
     
     Raises:
         ValueError: If clean_output is True but allowed_categories is None.
+        IndexError: If explanation=True but the explanation_separator is not found in the response.
         
     Example:
         >>> classify("aspirin", "pain relief medication", api_key="your_key")
@@ -55,6 +66,13 @@ def classify(name: str,
         
         >>> classify("aspirin", "pain relief medication", api_key="your_key", 
         ...          clean_output=True, allowed_categories=["MEDICAL", "FOOD"])
+        ["MEDICAL"]
+        
+        >>> # Using explanation feature (requires custom prompt with separator)
+        >>> custom_prompt = "Explain why, then say EXPLANATION_COMPLETE, then classify: ..."
+        >>> classify("aspirin", "pain relief", api_key="your_key", baseprompt=custom_prompt,
+        ...          clean_output=True, explanation=True, 
+        ...          allowed_categories=["MEDICAL", "FOOD"])
         ["MEDICAL"]
     """
     
@@ -89,10 +107,23 @@ def classify(name: str,
         top_p=top_p,
         stream=False
         )
-    if clean_output == False:
+    if not clean_output:
         return response.choices[0].message.content
     else:
         cleaned_response_string = response.choices[0].message.content.replace("\n", " ").replace("  ", " ").strip()
+
+        if explanation:
+            # Split by separator and extract classification part
+            parts = cleaned_response_string.split(explanation_separator)
+            if len(parts) < 2:
+                raise ValueError(
+                    f"Explanation separator '{explanation_separator}' not found in model response. "
+                    f"When explanation=True, the model must include the separator in its response. "
+                    f"Response received: {cleaned_response_string[:200]}..."
+                )
+            # Take everything after the first occurrence of the separator
+            cleaned_response_string = parts[1].strip()
+        
         classification_list = cleaned_response_string.split(",")
         classification_list = [item.strip().replace("  ", " ") for item in classification_list]
         

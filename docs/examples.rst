@@ -174,3 +174,50 @@ Updating Configuration
     chem.model("gpt-4.1")
     
     info, classification = chem.chemsource("insulin")
+
+Using Explanation Feature
+--------------------------
+
+.. code-block:: python
+
+    from chemsource import ChemSource
+    
+    # Create a custom prompt that includes explanation instructions
+    custom_prompt = """You are a helpful scientist that will classify the provided compound 
+    and explain your reasoning. First, provide a detailed explanation of your classification.
+    Then write EXPLANATION_COMPLETE on a new line.
+    Then provide only the categories as comma-separated values from: 
+    MEDICAL, ENDOGENOUS, FOOD, PERSONAL CARE, INDUSTRIAL, INFO.
+    
+    Compound name: COMPOUND_NAME
+    Information: """
+    
+    # Initialize with explanation feature enabled
+    chem = ChemSource(
+        model_api_key="your_openai_api_key",
+        prompt=custom_prompt,
+        clean_output=True,
+        explanation=True,  # Enable explanation extraction
+        explanation_separator="EXPLANATION_COMPLETE",  # Must match prompt
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL", "PERSONAL CARE", "ENDOGENOUS", "INFO"]
+    )
+    
+    # The model will provide explanation + separator + classification
+    # Only the classification part (after separator) will be returned
+    info, classification = chem.chemsource("aspirin")
+    print(f"Classification: {classification}")
+    # Output: ['MEDICAL']
+    
+    # You can also use a custom separator
+    custom_prompt_2 = """Explain your reasoning. Then write ### ANSWER ### 
+    Then provide categories: COMPOUND_NAME Information: """
+    
+    chem_custom = ChemSource(
+        model_api_key="your_openai_api_key",
+        prompt=custom_prompt_2,
+        clean_output=True,
+        explanation=True,
+        explanation_separator="### ANSWER ###",
+        allowed_categories=["MEDICAL", "FOOD", "INDUSTRIAL"]
+    )
+```

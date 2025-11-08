@@ -29,8 +29,16 @@ class ChemSource(Config):
         ncbi_key (str, optional): API key for NCBI/PubMed access.
         prompt (str, optional): Custom prompt template. Defaults to BASE_PROMPT.
         temperature (float, optional): Temperature parameter for model creativity. Defaults to 0.
+        top_p (float, optional): Top-p parameter for nucleus sampling. Defaults to 0.0000001.
         max_tokens (int, optional): Maximum number of tokens for model context. Defaults to 250000.
         clean_output (bool, optional): Whether to clean and validate output. Defaults to False.
+        explanation (bool, optional): Whether to expect explanations in model responses.
+                                     Only effective when clean_output=True. Requires a custom prompt
+                                     that instructs the model to include the explanation_separator.
+                                     Defaults to False.
+        explanation_separator (str, optional): Delimiter separating explanation from classification.
+                                              Only used when both clean_output and explanation are True.
+                                              Defaults to "EXPLANATION_COMPLETE".
         allowed_categories (List[str], optional): List of allowed categories for filtering. Defaults to None.
         custom_client (Any, optional): Custom OpenAI client instance. Defaults to None.
     
@@ -41,6 +49,8 @@ class ChemSource(Config):
     Attributes:
         spell_checker (SpellChecker): Spell checker instance for output correction (when clean_output is enabled).
         clean_output (bool): Whether output cleaning is enabled.
+        explanation (bool): Whether to extract explanations from responses.
+        explanation_separator (str): The delimiter for separating explanations.
         allowed_categories (List[str]): The allowed categories list.
         custom_client (Any): The custom client instance.
     
@@ -49,6 +59,13 @@ class ChemSource(Config):
         >>> info, classification = chem.chemsource("aspirin")
         >>> print(classification)
         "MEDICAL"
+        
+        >>> # Using explanation feature with custom prompt
+        >>> custom_prompt = "Explain your reasoning, then write EXPLANATION_COMPLETE, then provide categories..."
+        >>> chem = ChemSource(model_api_key="your_key", prompt=custom_prompt,
+        ...                   clean_output=True, explanation=True,
+        ...                   allowed_categories=["MEDICAL", "FOOD"])
+        >>> info, classification = chem.chemsource("aspirin")
     """
     
     def __init__(self, 
@@ -57,8 +74,11 @@ class ChemSource(Config):
                  ncbi_key: Optional[str] = None, 
                  prompt: str = BASE_PROMPT,
                  temperature: float = 0,
+                 top_p: float = 0.0000001,
                  max_tokens: int = 250000,
                  clean_output: bool = False,
+                 explanation: bool = False,
+                 explanation_separator: str = "EXPLANATION_COMPLETE",
                  allowed_categories: Optional[List[str]] = None,
                  custom_client: Optional[Any] = None) -> None:
         super().__init__(model_api_key=model_api_key, 
@@ -66,8 +86,11 @@ class ChemSource(Config):
                          ncbi_key=ncbi_key,
                          prompt=prompt, 
                          temperature=temperature,
+                         top_p=top_p,
                          max_tokens=max_tokens,
                          clean_output=clean_output,
+                         explanation=explanation,
+                         explanation_separator=explanation_separator,
                          allowed_categories=allowed_categories,
                          custom_client=custom_client
                          )
@@ -186,6 +209,8 @@ class ChemSource(Config):
                    self.top_p,
                    self.max_tokens,
                    self.clean_output,
+                   self.explanation,
+                   self.explanation_separator,
                    self.allowed_categories,
                    self.custom_client,
                    self.spell_checker)
