@@ -80,6 +80,7 @@ class Config:
                  clean_output: bool = False, 
                  explanation: bool = False,
                  explanation_separator: str = "EXPLANATION_COMPLETE",
+                 output_explanation: bool = False,
                  allowed_categories: Optional[List[str]] = None, 
                  custom_client: Optional[Any] = None) -> None:
         self.model_api_key = model_api_key
@@ -92,6 +93,7 @@ class Config:
         self.clean_output = clean_output
         self.explanation = explanation
         self.explanation_separator = explanation_separator
+        self.output_explanation = output_explanation
         self.allowed_categories = allowed_categories
         self.custom_client = custom_client
     
@@ -184,6 +186,15 @@ class Config:
             explanation_separator (str): The string that separates explanations in the output.
         """
         self.explanation_separator = explanation_separator
+    
+    def set_explanation_output(self, output_explanation: bool) -> None:
+        """
+        Set whether to output explanations along with classifications.
+        
+        Args:
+            output_explanation (bool): Whether to output explanations.
+        """
+        self.output_explanation = output_explanation
 
     def set_allowed_categories(self, allowed_categories: Optional[List[str]]) -> None:
         """
@@ -214,6 +225,7 @@ class Config:
                   clean_output: bool = False, 
                   explanation: bool = False,
                   explanation_separator: str = "EXPLANATION_COMPLETE",
+                  output_explanation: bool = False,
                   allowed_categories: Optional[List[str]] = None, 
                   custom_client: Optional[Any] = None) -> None:
         """
@@ -231,6 +243,8 @@ class Config:
             explanation (bool, optional): Whether to expect explanations in model responses. Defaults to False.
             explanation_separator (str, optional): Delimiter separating explanation from classification.
                                                   Defaults to "EXPLANATION_COMPLETE".
+            output_explanation (bool, optional): Whether to return the explanation text alongside classification.
+                                                Defaults to False.
             allowed_categories (List[str], optional): List of allowed categories for filtering. Defaults to None.
             custom_client (Any, optional): Custom OpenAI client instance. Defaults to None.
         """
@@ -244,6 +258,7 @@ class Config:
         self.clean_output = clean_output
         self.explanation = explanation
         self.explanation_separator = explanation_separator
+        self.output_explanation = output_explanation
         self.allowed_categories = allowed_categories
         self.custom_client = custom_client
 
@@ -274,6 +289,7 @@ class Config:
                 "clean_output": self.clean_output,
                 "explanation": self.explanation,
                 "explanation_separator": self.explanation_separator,
+                "output_explanation": self.output_explanation,
                 "allowed_categories": self.allowed_categories,
                 "custom_client": self.custom_client
                 }

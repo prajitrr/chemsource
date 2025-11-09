@@ -21,6 +21,7 @@ def classify(name: str,
              clean_output: bool = False,
              explanation: bool = False,
              explanation_separator: str = "EXPLANATION_COMPLETE",
+             output_explanation: bool = False,
              allowed_categories: Optional[List[str]] = None,
              custom_client: Optional[Any] = None,
              spell_checker: Optional[SpellChecker] = None) -> Union[str, List[str]]:
@@ -48,16 +49,24 @@ def classify(name: str,
                                               the classification in the model's response. Only used when
                                               both clean_output=True and explanation=True.
                                               Defaults to "EXPLANATION_COMPLETE".
+        output_explanation (bool, optional): Whether to return the explanation text alongside classification.
+                                            When True, returns a tuple (classification_list, explanation_text).
+                                            Only used when both explanation=True and clean_output=True.
+                                            Defaults to False.
         allowed_categories (List[str], optional): List of allowed categories for filtering output.
         custom_client (Any, optional): Custom OpenAI client instance.
         spell_checker (SpellChecker, optional): Spell checker instance for output correction.
     
     Returns:
-        Union[str, List[str]]: Either the raw model output (if clean_output=False) or 
-                              a cleaned list of categories (if clean_output=True).
+        Union[str, List[str], Tuple[List[str], str]]: 
+            - If clean_output=False: Raw model output string
+            - If clean_output=True and output_explanation=False: List of categories
+            - If clean_output=True, explanation=True, and output_explanation=True: 
+              Tuple of (category_list, explanation_text)
     
     Raises:
-        ValueError: If clean_output is True but allowed_categories is None.
+        ValueError: If clean_output is True but allowed_categories is None, or if
+                   output_explanation=True but explanation=False.
         IndexError: If explanation=True but the explanation_separator is not found in the response.
         
     Example:
@@ -68,12 +77,20 @@ def classify(name: str,
         ...          clean_output=True, allowed_categories=["MEDICAL", "FOOD"])
         ["MEDICAL"]
         
-        >>> # Using explanation feature (requires custom prompt with separator)
+        >>> # Using explanation feature
         >>> custom_prompt = "Explain why, then say EXPLANATION_COMPLETE, then classify: ..."
         >>> classify("aspirin", "pain relief", api_key="your_key", baseprompt=custom_prompt,
         ...          clean_output=True, explanation=True, 
         ...          allowed_categories=["MEDICAL", "FOOD"])
         ["MEDICAL"]
+        
+        >>> # Getting both classification and explanation
+        >>> categories, explanation = classify("aspirin", "pain relief", api_key="your_key", 
+        ...                                     baseprompt=custom_prompt, clean_output=True,
+        ...                                     explanation=True, output_explanation=True,
+        ...                                     allowed_categories=["MEDICAL", "FOOD"])
+        >>> print(categories)  # ["MEDICAL"]
+        >>> print(explanation)  # "Aspirin is widely used as a pain reliever..."
     """
     
     if custom_client is not None:
@@ -91,7 +108,8 @@ def classify(name: str,
     if clean_output and allowed_categories is None:
         raise ValueError("If clean_output is True, a list in allowed_categories must be provided to filter the output.")
     
-
+    if output_explanation and not explanation:
+        raise ValueError("If output_explanation is True, explanation must also be True.")
 
     split_base = baseprompt.split("COMPOUND_NAME")
     prompt = split_base[0] + str(name) + split_base[1] + str(input_text)
@@ -123,6 +141,7 @@ def classify(name: str,
                 )
             # Take everything after the first occurrence of the separator
             cleaned_response_string = parts[1].strip()
+            cleaned_explanation = parts[0].strip()
         
         classification_list = cleaned_response_string.split(",")
         classification_list = [item.strip().replace("  ", " ") for item in classification_list]
@@ -138,6 +157,13 @@ def classify(name: str,
                     # Fallback to original item if no spell checker provided
                     if item.upper() in [cat.upper() for cat in allowed_categories]:
                         updated_classification_list.append(item)
-            return updated_classification_list
+            
+            if explanation and output_explanation:
+                return updated_classification_list, cleaned_explanation
+            else:
+                return updated_classification_list
         else:
-            return classification_list
+            if explanation and output_explanation:
+                return classification_list, cleaned_explanation
+            else:
+                return classification_list

@@ -79,6 +79,7 @@ class ChemSource(Config):
                  clean_output: bool = False,
                  explanation: bool = False,
                  explanation_separator: str = "EXPLANATION_COMPLETE",
+                 output_explanation: bool = False,
                  allowed_categories: Optional[List[str]] = None,
                  custom_client: Optional[Any] = None) -> None:
         super().__init__(model_api_key=model_api_key, 
@@ -91,6 +92,7 @@ class ChemSource(Config):
                          clean_output=clean_output,
                          explanation=explanation,
                          explanation_separator=explanation_separator,
+                         output_explanation=output_explanation,
                          allowed_categories=allowed_categories,
                          custom_client=custom_client
                          )
@@ -114,7 +116,7 @@ class ChemSource(Config):
         self.allowed_categories = allowed_categories
         self.custom_client = custom_client
     
-    def chemsource(self, name: str, priority: str = "WIKIPEDIA", single_source: bool = False) -> Tuple[Tuple[Optional[str], Optional[str]], Optional[str]]:
+    def chemsource(self, name: str, priority: str = "WIKIPEDIA", single_source: bool = False) -> Union[Tuple[Tuple[Optional[str], Optional[str]], Optional[str]], Tuple[Tuple[Optional[str], Optional[str]], Optional[str], Optional[str]]]:
         """
         Retrieve information and classify a chemical compound.
         
@@ -129,9 +131,12 @@ class ChemSource(Config):
             single_source (bool, optional): Whether to use only the priority source. Defaults to False.
         
         Returns:
-            Tuple[Tuple[Optional[str], Optional[str]], Optional[str]]: A tuple containing:
+            Union[Tuple[Tuple[Optional[str], Optional[str]], Optional[str]], 
+                  Tuple[Tuple[Optional[str], Optional[str]], Optional[str], Optional[str]]]: 
+                A tuple containing:
                 - Information tuple: (source, content)
-                - Classification result
+                - Classification result (list or tuple depending on output_explanation)
+                - Explanation text (only if output_explanation=True)
         
         Raises:
             ValueError: If model_api_key is not provided.
@@ -142,6 +147,13 @@ class ChemSource(Config):
             >>> print(info[0])  # Source
             >>> print(info[1])  # Content
             >>> print(classification)  # Classification result
+            
+            >>> # With explanation output
+            >>> chem = ChemSource(model_api_key="your_key", explanation=True, 
+            ...                   output_explanation=True)
+            >>> info, (classification, explanation) = chem.chemsource("aspirin")
+            >>> print(classification)  # List of categories
+            >>> print(explanation)  # Explanation text
         """
         if self.model_api_key is None and self.custom_client is None:
             raise ValueError("Either model_api_key or custom_client must be provided")
@@ -156,7 +168,7 @@ class ChemSource(Config):
             return (None, None), None
         
         return information, cls(name, 
-                                information, 
+                                information,
                                 self.model_api_key,
                                 self.prompt,
                                 self.model,
@@ -164,6 +176,9 @@ class ChemSource(Config):
                                 self.top_p,
                                 self.max_tokens,
                                 self.clean_output,
+                                self.explanation,
+                                self.explanation_separator,
+                                self.output_explanation,
                                 self.allowed_categories,
                                 self.custom_client,
                                 self.spell_checker)
@@ -211,6 +226,7 @@ class ChemSource(Config):
                    self.clean_output,
                    self.explanation,
                    self.explanation_separator,
+                   self.output_explanation,
                    self.allowed_categories,
                    self.custom_client,
                    self.spell_checker)
